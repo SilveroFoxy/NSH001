@@ -8,11 +8,11 @@
           margin: 0;
           font-family: sans-serif;
           background-image: url('001.png');
-          background-size: cover; /* 圖片放大/縮小填滿整個區域 */
-          background-position: center; /* 圖片置中 */
-          background-repeat: no-repeat; /* 不重複平鋪 */
-          background-attachment: fixed; /* 背景固定在畫面不滾動（可選） */
-          height: 100vh; /* 確保 body 高度等於整個視窗高度 */
+          background-size: cover;
+          background-position: center;
+          background-repeat: no-repeat;
+          background-attachment: fixed;
+          height: 100vh;
       }
 
       h1 {
@@ -45,7 +45,6 @@
 
       canvas {
           width: 28vw;
-          /*max-width: 400px;*/
           height: auto;
           flex-shrink: 0;
           border-radius: 50%;
@@ -54,7 +53,6 @@
 
       #history-container {
           width: 10vw;
-          /*margin-right: 3vw;*/
       }
 
 
@@ -83,11 +81,7 @@
       #winner {
           width: 10vw;
           height: 55vh;
-          /*          min-width: 150px;
-          max-width: 200px;*/
           margin-top: 5vh;
-          /*margin: 20px;*/
-          /*margin-left: 3vw;*/
           font-size: 2.5vw;
           font-weight: bold;
           color: #fff;
@@ -116,26 +110,19 @@
           transition: background-color 0.3s ease;
       }
 
-    #startButton:disabled {
-      background-color: #999 !important;
-      cursor: not-allowed;
-    }
+      #startButton:disabled {
+        background-color: #999 !important;
+        cursor: not-allowed;
+      }
   </style>
 </head>
 <body>
         <h1>天線寶寶說你好</h1>
         <h2>結義240天紀念日抽獎</h2>
     <div class="main-container">
-        <!-- 左邊：歷史中獎名單-->
         <div id="history-container">
-            <!--<h2>歷史得獎名單</h2>
-            <ul id="history-list"></ul>-->
         </div>
-
-        <!-- 中間：輪盤 -->
         <canvas id="wheelCanvas" width="500" height="500"></canvas>
-
-        <!-- 右邊：恭喜中獎 -->
         <div id="winner">&nbsp;&nbsp;點&nbsp;&nbsp;擊&nbsp;&nbsp;開&nbsp;&nbsp;始 </div>
     </div>
 
@@ -153,8 +140,7 @@
         let animationFrameId;
 
         const colors = [
-            "#7DBBC3", "#DAEDBD", "#F4B9B2", "#e5b181",
-            "#de6b48"
+            "#7DBBC3", "#DAEDBD", "#F4B9B2", "#e5b181","#de6b48"
         ];
 
         const winnersHistory = [];
@@ -189,9 +175,9 @@
             ctx.fill();
 
             ctx.beginPath();
-            ctx.moveTo(radius, 30);            // 尖端朝下
-            ctx.lineTo(radius - 15, 0);        // 左上角
-            ctx.lineTo(radius + 15, 0);        // 右上角
+            ctx.moveTo(radius, 30);
+            ctx.lineTo(radius - 15, 0);
+            ctx.lineTo(radius + 15, 0);
             ctx.closePath();
 
             ctx.fillStyle = "#fff";
@@ -200,8 +186,6 @@
             ctx.shadowOffsetX = 0;
             ctx.shadowOffsetY = 2;
             ctx.fill();
-
-
         }
 
         let angularVelocity = 0;
@@ -229,8 +213,8 @@
                 return;
             }
             spinning = true;
-            angularVelocity = (Math.random() * 0.1) + 0.2; // ✅ 改成比較慢的初速度
-            angularAcceleration = 0; // 不先減速，讓它持續轉
+            angularVelocity = (Math.random() * 0.1) + 0.2;
+            angularAcceleration = 0;
             animate();
         }
 
@@ -247,8 +231,7 @@
             const winner = names[index % names.length];
 
             const winnerHtml = `<span style="color: yellow">${winner}</span>`;
-            document.getElementById("winner").innerHTML =
-                `🎉恭喜&nbsp;${winnerHtml}&nbsp;中獎！`;
+            document.getElementById("winner").innerHTML = `🎉恭喜&nbsp;${winnerHtml}&nbsp;中獎！`;
 
             names.splice(index % names.length, 1);
             winnersHistory.push(winner);
@@ -280,12 +263,10 @@
                 startSpin();
                 document.getElementById("startButton").innerText = "停止抽獎";
             } else {
-                // 第二次點擊才開始減速
                 angularAcceleration = -0.005;
                 document.getElementById("startButton").innerText = "等待停止";
             }
         });
-
         drawWheel();
     </script>
 
