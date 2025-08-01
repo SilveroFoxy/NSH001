@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>天線寶寶說你好抽獎囉</title>
+  <style>
+      body {
+          margin: 0;
+          font-family: sans-serif;
+          background-image: url('001.png');
+          background-size: cover; /* 圖片放大/縮小填滿整個區域 */
+          background-position: center; /* 圖片置中 */
+          background-repeat: no-repeat; /* 不重複平鋪 */
+          background-attachment: fixed; /* 背景固定在畫面不滾動（可選） */
+          height: 100vh; /* 確保 body 高度等於整個視窗高度 */
+      }
+
+      h1 {
+          margin: 0 auto;
+          color: #fff;
+          text-align: center;
+          text-shadow: 1px 1px 4px #000;
+          font-size: 4vw;
+      }
+
+      h2 {
+          margin: 0 auto;
+          color: #fff;
+          text-align: center;
+          text-shadow: 1px 1px 4px #000;
+          font-size: 2vw;
+      }
+
+      .main-container {
+          display: flex;
+          justify-content: center;
+          align-items: flex-start;
+          padding: 20px;
+          position: relative;
+          gap: 0;
+          margin: 0 auto;
+          flex-wrap: wrap;
+          justify-content: center;
+      }
+
+      canvas {
+          width: 28vw;
+          /*max-width: 400px;*/
+          height: auto;
+          flex-shrink: 0;
+          border-radius: 50%;
+          box-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
+      }
+
+      #history-container {
+          width: 10vw;
+          /*margin-right: 3vw;*/
+      }
+
+
+      #history-container h2 {
+          margin-bottom: 8px;
+          font-size: 2vw;
+          text-align: center;
+      }
+
+      #history-list {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+          border: 2px solid #ff5722;
+          border-radius: 10px;
+          background-color: rgba(0,0,0,0.5);
+          overflow-y: auto;
+      }
+
+      #history-list li {
+          padding: 6px 10px;
+          border-bottom: 1px solid #ff5722;
+          text-align: center;
+      }
+
+      #winner {
+          width: 10vw;
+          height: 55vh;
+          /*          min-width: 150px;
+          max-width: 200px;*/
+          margin-top: 5vh;
+          /*margin: 20px;*/
+          /*margin-left: 3vw;*/
+          font-size: 2.5vw;
+          font-weight: bold;
+          color: #fff;
+          text-shadow: 1px 1px 4px #000;
+          writing-mode: vertical-rl;
+          text-align: center;
+          white-space: pre-line;
+          user-select: none;
+          overflow-y: auto;
+          flex-shrink: 0;
+      }
+
+      #startButton {
+          display: block;
+          margin: 0 auto;
+          font-size: 2vw;
+          padding: 10px 20px;
+          font-weight: bold;
+          border: none;
+          border-radius: 10px;
+          background-color: #FF5151;
+          color: white;
+          cursor: pointer;
+          box-shadow: 2px 2px 5px #0006;
+          user-select: none;
+          transition: background-color 0.3s ease;
+      }
+
+    #startButton:disabled {
+      background-color: #999 !important;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+        <h1>天線寶寶說你好</h1>
+        <h2>結義240天紀念日抽獎</h2>
+    <div class="main-container">
+        <!-- 左邊：歷史中獎名單-->
+        <div id="history-container">
+            <!--<h2>歷史得獎名單</h2>
+            <ul id="history-list"></ul>-->
+        </div>
+
+        <!-- 中間：輪盤 -->
+        <canvas id="wheelCanvas" width="500" height="500"></canvas>
+
+        <!-- 右邊：恭喜中獎 -->
+        <div id="winner">&nbsp;&nbsp;點&nbsp;&nbsp;擊&nbsp;&nbsp;開&nbsp;&nbsp;始 </div>
+    </div>
+
+    <button id="startButton">開始抽獎</button>
+
+    <script>
+        let names = ["銀狐", "凡攸", "斑比", "玉仔", "宿淵", "顏無双", "果蔫然", "白可可", "月不隨", "南仔"];
+
+        const canvas = document.getElementById("wheelCanvas");
+        const ctx = canvas.getContext("2d");
+        const radius = canvas.width / 2;
+
+        let currentAngle = 0;
+        let spinning = false;
+        let animationFrameId;
+
+        const colors = [
+            "#7DBBC3", "#DAEDBD", "#F4B9B2", "#e5b181",
+            "#de6b48"
+        ];
+
+        const winnersHistory = [];
+
+        function drawWheel() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const anglePerSlice = 2 * Math.PI / names.length;
+
+            for (let i = 0; i < names.length; i++) {
+                const start = currentAngle + i * anglePerSlice;
+                const end = start + anglePerSlice;
+
+                ctx.beginPath();
+                ctx.moveTo(radius, radius);
+                ctx.arc(radius, radius, radius - 10, start, end);
+                ctx.fillStyle = colors[i % colors.length];
+                ctx.fill();
+
+                ctx.save();
+                ctx.translate(radius, radius);
+                ctx.rotate(start + anglePerSlice / 2);
+                ctx.textAlign = "right";
+                ctx.fillStyle = "#fff";
+                ctx.font = "24px sans-serif";
+                ctx.fillText(names[i], radius - 20, 10);
+                ctx.restore();
+            }
+
+            ctx.beginPath();
+            ctx.arc(radius, radius, 30, 0, Math.PI * 2);
+            ctx.fillStyle = "#fff";
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.moveTo(radius, 30);            // 尖端朝下
+            ctx.lineTo(radius - 15, 0);        // 左上角
+            ctx.lineTo(radius + 15, 0);        // 右上角
+            ctx.closePath();
+
+            ctx.fillStyle = "#fff";
+            ctx.shadowColor = "#000";
+            ctx.shadowBlur = 6;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 2;
+            ctx.fill();
+
+
+        }
+
+        let angularVelocity = 0;
+        let angularAcceleration = 0;
+
+        function animate() {
+            if (!spinning) return;
+
+            angularVelocity += angularAcceleration;
+
+            if (angularVelocity <= 0.01) {
+                stopWheel();
+                return;
+            }
+
+            currentAngle += angularVelocity;
+            currentAngle %= (2 * Math.PI);
+            drawWheel();
+            animationFrameId = requestAnimationFrame(animate);
+        }
+
+        function startSpin() {
+            if (names.length < 2) {
+                alert("名單數量不足，無法抽獎！");
+                return;
+            }
+            spinning = true;
+            angularVelocity = (Math.random() * 0.1) + 0.2; // ✅ 改成比較慢的初速度
+            angularAcceleration = 0; // 不先減速，讓它持續轉
+            animate();
+        }
+
+        function stopWheel() {
+            cancelAnimationFrame(animationFrameId);
+            spinning = false;
+
+            const anglePerSlice = 2 * Math.PI / names.length;
+
+            const pointerAngle = (-Math.PI / 2 + 2 * Math.PI) % (2 * Math.PI);
+            const totalAngle = (pointerAngle - currentAngle + 2 * Math.PI) % (2 * Math.PI);
+            const index = Math.floor(totalAngle / anglePerSlice);
+
+            const winner = names[index % names.length];
+
+            const winnerHtml = `<span style="color: yellow">${winner}</span>`;
+            document.getElementById("winner").innerHTML =
+                `🎉恭喜&nbsp;${winnerHtml}&nbsp;中獎！`;
+
+            names.splice(index % names.length, 1);
+            winnersHistory.push(winner);
+            updateHistory();;
+
+            const btn = document.getElementById("startButton");
+            if (names.length < 1) {
+                btn.innerText = "抽獎結束";
+                btn.disabled = true;
+            } else {
+                btn.innerText = "開始抽獎";
+                btn.disabled = false;
+            }
+        }
+
+        function updateHistory() {
+            const ul = document.getElementById("history-list");
+            ul.innerHTML = "";
+            winnersHistory.forEach(name => {
+                const li = document.createElement("li");
+                li.textContent = name;
+                ul.appendChild(li);
+            });
+        }
+
+        document.getElementById("startButton").addEventListener("click", () => {
+            if (!spinning) {
+                document.getElementById("winner").innerHTML = "&nbsp;&nbsp;點&nbsp;&nbsp;擊&nbsp;&nbsp;開&nbsp;&nbsp;始 ";
+                startSpin();
+                document.getElementById("startButton").innerText = "停止抽獎";
+            } else {
+                // 第二次點擊才開始減速
+                angularAcceleration = -0.005;
+                document.getElementById("startButton").innerText = "等待停止";
+            }
+        });
+
+        drawWheel();
+    </script>
+
+</body>
+</html>
