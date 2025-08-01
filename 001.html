@@ -118,7 +118,7 @@
 </head>
 <body>
         <h1>天線寶寶說你好</h1>
-        <h2>結義240天紀念日抽獎</h2>
+        <h2>🎉結義240天紀念日抽獎🎉</h2>
     <div class="main-container">
         <div id="history-container">
         </div>
@@ -129,7 +129,7 @@
     <button id="startButton">開始抽獎</button>
 
     <script>
-        let names = ["銀狐", "凡攸", "斑比", "玉仔", "宿淵", "顏無双", "果蔫然", "白可可", "月不隨", "南仔"];
+        let names = ["銀狐", "凡攸", "斑比", "玉仔", "宿淵", "顏無双", "果蔫然", "白可可", "月不隨", "南仔", "大人物"];
 
         const canvas = document.getElementById("wheelCanvas");
         const ctx = canvas.getContext("2d");
@@ -140,7 +140,7 @@
         let animationFrameId;
 
         const colors = [
-            "#7DBBC3", "#DAEDBD", "#F4B9B2", "#e5b181","#de6b48"
+            "#7DBBC3", "#DAEDBD", "#F4B9B2", "#e5b181", "#de6b48", "#FF5151"
         ];
 
         const winnersHistory = [];
@@ -175,16 +175,17 @@
             ctx.fill();
 
             ctx.beginPath();
-            ctx.moveTo(radius, 30);
-            ctx.lineTo(radius - 15, 0);
-            ctx.lineTo(radius + 15, 0);
+            // 頂點在右側圓周外 10px 處
+            ctx.moveTo(radius + radius - 60, radius);         // 尖端（朝左，稍微向左）
+            ctx.lineTo(radius + radius + 20, radius - 20);    // 底部上方點（右邊一點，上）
+            ctx.lineTo(radius + radius + 20, radius + 20);    // 底部下方點（右邊一點，下）
             ctx.closePath();
 
             ctx.fillStyle = "#fff";
             ctx.shadowColor = "#000";
             ctx.shadowBlur = 6;
             ctx.shadowOffsetX = 0;
-            ctx.shadowOffsetY = 2;
+            ctx.shadowOffsetY = 3;
             ctx.fill();
         }
 
@@ -224,7 +225,7 @@
 
             const anglePerSlice = 2 * Math.PI / names.length;
 
-            const pointerAngle = (-Math.PI / 2 + 2 * Math.PI) % (2 * Math.PI);
+            const pointerAngle = 0; // 指標指向右側
             const totalAngle = (pointerAngle - currentAngle + 2 * Math.PI) % (2 * Math.PI);
             const index = Math.floor(totalAngle / anglePerSlice);
 
